@@ -1,0 +1,33 @@
+.audio-page-wrapper {
+    width: 50%;
+    background-color: #eee;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.audio-page-wrapper div {
+    padding: 5px;
+}
+
+.audio-page-album-icon{
+    width: 30%;
+    margin: auto;
+    padding: 20px;
+    border: 2px solid #ccc;
+}
+
+.audio-page-album-icon img {
+    width: 100%;
+}
+
+.audio-comments-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}  
+
+.audio-liked {
+
+}

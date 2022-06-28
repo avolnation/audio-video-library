@@ -26,6 +26,15 @@
   grid-template-rows: repeat(2, 0.5fr);
   grid-column-gap: 0px;
   grid-row-gap: 0px;
+
+  transition-duration: 2s;
+  transition-property: transform;
+  transition-timing-function: ease;
+}
+
+.audio-item:hover{
+  animation-duration: 0.5s;
+  transform: scale(1.1);
 }
 
 .container{
@@ -49,7 +58,7 @@
 }
 
 .grid-album-cover img {
-  width: 70%;
+  width: 60%;
 }
 
 .grid-title { 
@@ -69,6 +78,51 @@
 }
 
 .grid-play img {
-  min-height: 60%;
-  width: 40%;
+  min-height: 50%;
+  width: 30%;
+}
+
+.player{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #3479f84a;
+  color: white;
+  text-align: center;
+  backdrop-filter: blur(2px);
+  -webkit-box-shadow: 0px 0px 8px 0px rgba(34, 60, 80, 0.2);
+  -moz-box-shadow: 0px 0px 8px 0px rgba(34, 60, 80, 0.2);
+  box-shadow: 0px 0px 8px 0px rgba(34, 60, 80, 0.2);
+}
+
+.player img{
+  height: 30px;
+  width: 30px;
+  /* bottom: -2px; */
+  padding: 5px;
+  border: 3px solid black;
+  border-radius: 15px;
+  transition: all 1s;
+  cursor: pointer
+}
+
+.player img:hover {
+  transform: scale(1.1);
+}
+
+.previous-track-button {
+  transform: rotate(180deg);
+}
+
+.previous-track-button, .play-button, .next-track-button {
+  padding: 15px 5px;
+}
+
+.player-controls{
+  display: flex;
+  flex-direction: row;
+  justify-items: center;
+  width: fit-content;
+  margin: auto;
 }
