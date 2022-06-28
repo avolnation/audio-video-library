@@ -7,7 +7,12 @@ class AudioPage extends Component {
 
     state = {
         songInfo: {},
-        loadingSongData: true
+        loadingSongData: true,
+        comment: ''
+    }
+
+    componentDidMount() {
+        this.getSongById();
     }
     
     getSongById = () => {
@@ -19,11 +24,6 @@ class AudioPage extends Component {
         })
         
     }
-
-    componentDidMount() {
-            this.getSongById();
-    }
-
 
     likeHandler = () => {
         const songInfo = this.state.songInfo;
@@ -42,18 +42,28 @@ class AudioPage extends Component {
         
     }
 
-    componentDidUpdate(prevState){
+    commentChange = (event) => {
 
+        const lastCommentState = event.target.value
+
+        this.setState({comment: lastCommentState})
+        
     }
 
-//     componentDidUpdate(){
-//             console.log(this.state.songInfo.comments)
-//             if(this.state.songInfo.comments){
-//                 this.setState((state) => {
-//                     return {loadingSongData: !state.loadingSongData}
-//             })   
-//     }
-// }
+    addCommentHandler = (e) => {
+        e.preventDefault();
+        const songInfo = this.state.songInfo;
+
+        console.log(songInfo.comments)
+
+        songInfo.comments.push({id: Math.random(), fromId: Math.random(), comment: this.state.comment})
+
+        this.setState({loadingSongData: true}, () => {
+            this.setState({songInfo: songInfo}, () => {
+                this.setState({loadingSongData: false})
+            })
+        })
+    }
 
     render() {
         return (
@@ -70,8 +80,9 @@ class AudioPage extends Component {
                 <div className='audio-number-of-plays'> Played {this.state.songInfo.numberOfPlays} times</div>
             <div className='audio-comments-section'>
                 Add Your Comment
-                <form>
-                    <textarea name="comment" id="comment" rows="5"></textarea>
+                <form onSubmit={(e) => this.addCommentHandler(e)}>
+                    <textarea name="comment" id="comment" rows="5" onChange={(event) => this.commentChange(event)} value={this.state.comment}></textarea>
+                    <button>submit</button>
                 </form>
                 Comments:
                 {this.state.loadingSongData ? <Spinner/> : this.state.songInfo.comments.map(el => {
@@ -80,7 +91,6 @@ class AudioPage extends Component {
                     )
                 })}
             </div>
-            {this.props.match.params.id}
         </div>
         )
     }
