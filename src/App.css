@@ -33,6 +33,7 @@
 }
 
 .audio-item:hover{
+  cursor: pointer;
   animation-duration: 0.5s;
   transform: scale(1.1);
 }
@@ -88,7 +89,7 @@
   bottom: 0;
   width: 100%;
   --bs-bg-opacity: 1;
-  background-color: rgba(var(--bs-light-rgb),var(--bs-bg-opacity))!important;;
+  background-color: rgba(var(--bs-light-rgb),var(--bs-bg-opacity))!important;
   color: white;
   text-align: center;
   backdrop-filter: blur(2px);
