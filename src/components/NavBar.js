@@ -1,72 +1,95 @@
 import React, { useState } from "react";
-import {Navbar, Container, Nav, NavDropdown} from "react-bootstrap"
-import userIcon from "../images/user.png"
+import { DownOutlined, SmileOutlined } from '@ant-design/icons';
+import { Dropdown, Menu, Space } from 'antd'
 import ModalWindow from "./ModalWindow";
+import "./NavBar.css"
 
 const NavBar = props => {
 
     const [modalType, setModalType] = useState("");
 
-
-
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
-    const handleShow = (e) => {
-        if(e === 1){
-            setModalType("signup")
+    const handleShow = ({ key }) => {
+        console.log(key)
+        if(+key === 1){
+            setModalType("Log In")
         }
-        if(e === 2){
-            setModalType("login")
+        if(+key === 2){
+            setModalType("Sign Up")
         }
         setShow(true)
     };
 
 
-
+    const accountDropdown = 
+    props.authenticated ? (<Menu
+        items={[
+          {
+            key: '1',
+            label: (
+              <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+                My Account
+              </a>
+            ),
+          },
+          {
+            key: '2',
+            label: (
+              <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
+                Admin panel
+              </a>
+            ),
+            icon: <SmileOutlined />,
+            disabled: true,
+          },
+          {
+            key: '4',
+            danger: true,
+            label: 'Sign out',
+          },
+        ]}
+  />) : (<Menu onClick={handleShow}
+    items={[
+      {
+        key: '1',
+        label: "Log In",
+      },
+      {
+        key: '2',
+        label: 'Sign Up',
+        disabled: false,
+      },
+    ]}
+/>)
+        
+    
     return (
-        <React.Fragment>
-            <ModalWindow modalType={modalType} show={show} hide={handleClose}></ModalWindow>
-            <Navbar bg="light" expand="lg">
-                <Container>
-                    <Navbar.Brand href="/">Audio-Video Library</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="me-auto" justify="true">
-                        <Nav.Link href="/videos">Videos</Nav.Link>
-                        <Nav.Link href="/audios">Audios</Nav.Link>
-                        <NavDropdown title="My Account" id="basic-nav-dropdown">
-                        <Container>
-                        <Navbar.Brand href="#home">
-                            <img 
-                            style={{"width": "30px", "height": "30px"}}
-                            src={userIcon}
-                            alt="User"/>
-                        </Navbar.Brand>
-                        </Container>
-                        { props.authenticated ? 
-                        <React.Fragment>
-                            <NavDropdown.Item href="#action/3.1">My Profile</NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.2">Favorites</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                                <NavDropdown.Item 
-                                style={{"color": "red"}} 
-                                href="#action/3.3" >
-                                Log out
-                                </NavDropdown.Item>
-                        </React.Fragment> 
-                            : 
-                            <React.Fragment>
-                                <NavDropdown.Item onClick={() => handleShow(1)} href="#action/3.2">Sign Up</NavDropdown.Item>
-                                <NavDropdown.Item onClick={() => handleShow(2)} href="#action/3.1">Log In</NavDropdown.Item>
-                            </React.Fragment>
-                        }
-                        </NavDropdown>
-                    </Nav>
-                    </Navbar.Collapse>
-                </Container>
-            </Navbar>
-        </React.Fragment>
+        <>
+            <ModalWindow notification={props.notif} modalType={modalType} show={show} hide={handleClose}></ModalWindow>
+            <nav className="navigation">
+                <ul className="navigation-items">
+                    <li>
+                        <a>Logo here</a>
+                    </li>
+                    <li>
+                        <a>Audios</a> 
+                    </li>
+                    <li>
+                        <a>Videos</a>
+                    </li>
+                    <li>
+                        <Dropdown overlay={accountDropdown} trigger={['click']}>
+                            <a onClick={(e) => e.preventDefault()}>
+                                My account
+                            </a>
+                        </Dropdown>  
+                    </li>
+                                     
+                </ul>  
+            </nav>
+        </>
     );
 }
 

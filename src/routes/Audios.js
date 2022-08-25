@@ -116,14 +116,12 @@ const Audio = (props) => {
               </div>
         </div>
          <div className="audio-container-wrapper">
-         <div className='audio-container'>
-          
+
           <div style={{marginLeft: '2%'}}>
           <div style={{ margin: '10px'}}>
             <img style={{width: '24px', height: '24px'}} src="images/genres.svg" alt="genres"/>
             <span className='audio-container-wrapper-span'>Genres</span>
           </div>
-            
             <AudioFilters clicked={setGenreForFilter}/>
           </div>
         <div className="audio-pagination">
@@ -132,8 +130,6 @@ const Audio = (props) => {
             <span className='audio-container-wrapper-span'>Track List</span>
           </div>
         <div className="audio-item-wrapper">
-          
-
           {tracks} 
         </div>
           <Pagination>
@@ -141,7 +137,7 @@ const Audio = (props) => {
           </Pagination> 
         </div>
         
-        </div>
+
           </div>  
         
       <AudioFooter />

@@ -1,0 +1,26 @@
+.navigation {
+    top: 0;
+    left: 0;
+    margin: 0;
+    background-color: white;
+    height: 50px;
+    display: block;
+}
+
+.navigation-items {
+    /* list-style: none; */
+    display: block;
+    height: 90%;
+}
+
+.navigation-items li {
+    display: block;
+    float: left;
+    margin: 5px;
+    padding: 5px;
+}
+
+.navigation-items li a{
+    text-decoration: none;
+    color: inherit;
+}

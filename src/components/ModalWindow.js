@@ -1,68 +1,101 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, Form } from 'react-bootstrap';
+// import { Button, Modal, Form } from 'react-bootstrap';
+import { Modal, Form, Button, Input } from 'antd'
 
+import {notification} from 'antd'
 const ModalWindow = props => {
+
+  const notif = (type, title, message) => {
+    notification[type](
+      {
+        message: title,
+        description: message,
+        placement: 'bottomRight'
+      }
+    )
+  }
 
   console.log(props);
 
   const {show, hide, modalType} = props
-  
-  //loginCredentials state setup/handling and changes watching
-  const [loginCredentials, setLoginCredentials] = useState({});
 
-  const handleLoginCredentials = (creds) => {
-    console.log(creds);
-    const {login, password} = {login: creds.target[0].value, password:creds.target[1].value};
-    console.log(login + password);
-    setLoginCredentials({
-      login: login,
-      password: password
-    })   
+  const [form] = Form.useForm()
+
+  const signupHandler = () => {
+    // notif('Success', 'Success', 'Success')
+    fetch('http://localhost:3002/auth/signup', {method: 'POST', 
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(form.getFieldsValue())
+    })
+    .then(result => {
+      return result.json()
+    })
+    .then(result => {
+      notif(result.status, result.status == 'success' ? 'Success' : 'Error', result.message)
+      console.log(result)
+      form.resetFields()
+      hide()
+    })
   }
 
-//Следим за изменением state у loginCredentials
-  useEffect(() => {
-    console.log(loginCredentials)
-  }, [loginCredentials])
+  const loginHandler = () => {
+    fetch('http://localhost:3002/auth/login', {method: 'POST', 
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(form.getFieldsValue())
+    })
+    .then(result => {
+      return result.json()
+    })
+    .then(result => {
+      document.cookie = `token=${result.token}; path=/; max-age=3600`
+      notif(result.status, result.status == 'success' ? 'Success' : 'Error', result.message)
+      console.log(result)
+      form.resetFields()
+      hide()
+    })
+    
+  }
 
   return (
+    modalType == 'Sign Up' ? 
     <>
-      {/* <Button variant="primary" onClick={handleShow}>
-        Launch demo modal
-      </Button> */}
-      <Modal show={show} onHide={hide}>
-        <Modal.Header closeButton>
-          <Modal.Title>{modalType}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-        <Form onSubmit={handleLoginCredentials}>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control type="email" placeholder="Enter email" required/>
-            <Form.Text className="text-muted">
-              We'll never share your email with anyone else.
-            </Form.Text>
-          </Form.Group>
-
-          <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" required/>
-          </Form.Group>
-          <Button variant="primary" type="submit">
-            Submit
-          </Button>
+      <Modal title={modalType} visible={show} onCancel={hide} onOk={signupHandler}>
+        <Form form={form}>
+          <Form.Item
+            name="email"
+            label="E-mail"
+            rules={[{required: true},]}>
+            <Input/>
+          </Form.Item>
+          <Form.Item
+            name="password"
+            label="Password"
+            rules={[{required: true},]}>
+            <Input/>
+          </Form.Item>
         </Form>
-        </Modal.Body>
-        {/* <Modal.Footer>
-          <Button variant="secondary" onClick={hide}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={hide}>
-            Save Changes
-          </Button>
-        </Modal.Footer> */}
       </Modal>
-    </>
+    </> :
+    <>
+    <Modal title={modalType} visible={show} onCancel={hide} onOk={loginHandler}>
+      <Form form={form}>
+        <Form.Item
+          name="email"
+          label="E-mail"
+          rules={[{required: true},]}>
+          <Input/>
+        </Form.Item>
+        <Form.Item
+          name="password"
+          label="Password"
+          rules={[{required: true},]}>
+          <Input/>
+        </Form.Item>
+          <Button>Forgot Password?</Button>
+      </Form>
+    </Modal>
+  </>
+    
   );
 }
 
