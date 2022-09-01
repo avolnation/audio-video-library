@@ -17,12 +17,20 @@ class AudioPage extends Component {
     
     getSongById = () => {
         const id = this.props.match.params.id;
-        const songInfo = audioList.find(el => el.id == id)
-
-        this.setState({songInfo: songInfo}, () => {
+        fetch('http://localhost:3002/audios/audio-info-by-id', {method: 'POST', 
+        body: id})
+        .then(result => {
+            console.log(result)
+            return result.json();
+        })
+        .then(result => {
+            this.setState({songInfo: result.audioInfo[0]})
             this.setState({loadingSongData: false})
         })
-        
+        .catch(err => {
+            console.log(err)
+            this.setState({loadingSongData: false})
+        })
     }
 
     likeHandler = () => {
@@ -64,15 +72,23 @@ class AudioPage extends Component {
                 })
             })
         }
+    }
 
+    trackSingers = () => {
+        let songInfo = this.state.songInfo;
+        let trackSingers = songInfo.singers.map(el => {
+            return el.name }).join(', ')
+        return trackSingers
     }
 
     render() {
+
         return (
+            this.state.loadingSongData ? <Spinner /> : 
         <div className='audio-page-wrapper'>
             <div 
                 className='audio-info-wrapper' 
-                style={{backgroundImage: `url(${this.state.songInfo.imagePath})`, 
+                style={{backgroundImage: `url(${'http://localhost:3002/' + this.state.songInfo.imagePath})`, 
                         backgroundSize: 'cover'}}>
                 {/* <div className='audio-page-album-icon'>
                     <img src={this.state.songInfo.imagePath} alt="Album" />
@@ -82,7 +98,7 @@ class AudioPage extends Component {
                         {this.state.songInfo.title}
                     </div>
                     <div className='audio-singer'> 
-                        by {this.state.songInfo.singer}
+                        by {this.trackSingers()}
                     </div>
                 </div>
                 <button className='audio-liked' onClick={this.likeHandler}> 
@@ -107,7 +123,7 @@ class AudioPage extends Component {
                         <span>Comments</span>
                         <hr/>
                             <input onChange={(event) => this.commentChange(event)} onKeyUp={(e) => this.addCommentHandler(e)} id="comment" placeholder='Leave your comment'/>
-                        {this.state.loadingSongData ? <Spinner/> : this.state.songInfo.comments.map(el => {
+                        {/* {this.state.loadingSongData ? <Spinner/> : this.state.songInfo.comments.map(el => {
                             return (
                                 <div className='audio-comments-section-comment' key={el.id}>
                                     <img className='audio-comments-section-comment-user-icon' src="https://bootdey.com/img/Content/user_1.jpg" alt="" />
@@ -118,7 +134,7 @@ class AudioPage extends Component {
                                     </div>
                                     </div>
                             )
-                        })}
+                        })} */}
                     </div>
                 </div> 
             

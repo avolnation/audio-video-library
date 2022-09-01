@@ -11,6 +11,7 @@ const NavBar = props => {
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
+
     const handleShow = ({ key }) => {
         console.log(key)
         if(+key === 1){
@@ -22,15 +23,22 @@ const NavBar = props => {
         setShow(true)
     };
 
+    const handleUserMenuClick = ({ key }) => {
+      console.log(key)
+      if(+key == 4){
+        props.logout()
+      }
+    }
+
 
     const accountDropdown = 
-    props.authenticated ? (<Menu
+    props.authenticated ? (<Menu onClick={handleUserMenuClick}
         items={[
           {
             key: '1',
             label: (
-              <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-                My Account
+              <a rel="noopener noreferrer" href="http://localhost:3000/collection">
+                Collection
               </a>
             ),
           },
@@ -41,7 +49,7 @@ const NavBar = props => {
                 Admin panel
               </a>
             ),
-            icon: <SmileOutlined />,
+            // icon: <SmileOutlined />,
             disabled: true,
           },
           {

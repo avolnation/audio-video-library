@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import { Form, Input, Checkbox, Select, Upload, Spin } from 'antd'
+import { Form, Input, Checkbox, Select, Upload, Spin, Button } from 'antd'
 
-import Button from 'react-bootstrap/Button';
 import NewSingerModal from '../components/NewSingerModal'
 
 const Audio = (props) => {
@@ -102,16 +101,6 @@ const Audio = (props) => {
         setFormLoading(false)
         
     }
-
-    // const onFinishFailed = (errorInfo) => {
-    //     console.log(errorInfo)
-    //     notification.error({
-    //         placement: 'bottomRight',
-    //         duration: 3,
-    //         message: 'Something went wrong',
-    //         description: errorInfo
-    //     })
-    // };
 
     singersArray.push(singers ? singers.map((el, idx) => {
         return <Option key={el._id}>

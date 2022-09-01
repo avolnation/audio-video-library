@@ -47,13 +47,20 @@ const ModalWindow = props => {
       return result.json()
     })
     .then(result => {
-      document.cookie = `token=${result.token}; path=/; max-age=3600`
-      notif(result.status, result.status == 'success' ? 'Success' : 'Error', result.message)
-      console.log(result)
-      form.resetFields()
-      hide()
+      if(result.status === 'success'){
+        document.cookie = `token=${result.token}; path=/; max-age=3600`
+        notif(result.status, 'Success', result.message)
+        console.log(result)
+        form.resetFields()
+        hide()
+        setTimeout(() => window.location.reload(), 1000)
+      }
+      if(result.status === 'error'){
+        notif(result.status, 'Error', result.message)
+        form.resetFields()
+        hide()
+      }
     })
-    
   }
 
   return (
@@ -89,7 +96,7 @@ const ModalWindow = props => {
           name="password"
           label="Password"
           rules={[{required: true},]}>
-          <Input/>
+          <Input.Password />
         </Form.Item>
           <Button>Forgot Password?</Button>
       </Form>
