@@ -5,14 +5,16 @@ import AudioFilters from '../components/audioFilter/audioFilters';
 
 import { Dropdown, Menu, Popconfirm, Modal, Form, Input, Select, Button, Spin } from 'antd'
 
-import { EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons'
+import { EditOutlined, DeleteOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons'
 
 
 const Audio = (props) => {
 
   const singersArray = []
 
-  const { Option } = Select
+  const { Option } = Select;
+
+  const { SubMenu } = Menu;
 
   const [genre, setGenre] = useState(null);
   const [tracks, setTracks] = useState([])
@@ -95,27 +97,44 @@ const fetchAudios = () => {
     })
 }
 
+  const addToPlaylistHandler = ( audioId, playlistId ) => {
+    fetch('http://localhost:3002/playlists/add-to-playlist', {method: 'POST',
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({playlistId: playlistId, audioId: audioId}),
+    })
+    .then(result => result.json())
+    .then(result => {
+      props.notification(result.status, result.status == 'success' ? 'Success' : 'Error', result.message)
+    })
+  }
+
   const audiosMenu = (item) => (
     <Menu>
-      {
-      <React.Fragment>
-          <Menu.Item key="1"><div onClick={() => toAudioPageHandler(item)}><EyeOutlined /> Song info </div></Menu.Item>
-          <Menu.Item key="2">
-          <Menu.SubMenu icon={<EyeOutlined />} title="Add to playlist">
-            <Menu.Item  key="2.1">Hello</Menu.Item>
-          </Menu.SubMenu>
-            </Menu.Item>
-          <Menu.Item key="3"><div onClick={() => {
-            setSingerForm({...singerForm, id: item})
-            props.setModal('edit_audio')
-            }}><EditOutlined /> Edit </div></Menu.Item>
-          <Popconfirm onConfirm={() => handleAudioDelete(item)} placement="topRight" title={`You\'re about to delete track. Proceed?`} okText="Да" cancelText="Нет">
-              <Menu.Item danger key="4">
-                  <DeleteOutlined /> Delete
+      <Menu.Item key="1" icon={<EyeOutlined />} onClick={() => toAudioPageHandler(item)}>Audio Info</Menu.Item> 
+        <SubMenu key="2" icon={<PlusOutlined style={{"marginTop": "10px"}} />} title={ <span>Add to playlist</span>  }> 
+        {/* Playlists from server (Fetch + render)*/}
+          {props.playlists.length >= 1 ?
+            props.playlists.map(el => {
+              return <Menu.Item key={el._id} onClick={() => {
+                addToPlaylistHandler(item, el._id)
+              }}> 
+                {el.title}
               </Menu.Item>
-          </Popconfirm>
-      </React.Fragment>
-      }
+            })
+             :
+            <Menu.Item disabled={true}>No playlists</Menu.Item>
+}            
+        </SubMenu>
+      <Menu.Item key="3" icon={<EditOutlined />} onClick={() => {
+        setSingerForm({...singerForm, id: item})
+        props.setModal('edit_audio')
+        }}> Edit 
+      </Menu.Item>
+      <Popconfirm onConfirm={() => handleAudioDelete(item)} placement="topRight" title={`You\'re about to delete track. Proceed?`} okText="Да" cancelText="Нет">
+          <Menu.Item danger key="4" icon={<DeleteOutlined />}>
+            Delete
+          </Menu.Item>
+      </Popconfirm>
     </Menu>)
 
   let audios;

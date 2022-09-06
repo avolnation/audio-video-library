@@ -216,9 +216,12 @@ ul.pagination {
 }
 
 .playlist-img {
-  margin-right: 20px;
+  margin: 1%;
+  border: 2px solid transparent;
 }
 
 .playlist-img-hover:hover{
-  transform: scale(1.1);
+  /* transform: scale(1.1); */
+  /* position: absolute; */
+  border: 2px solid #ffdb4d;
 }

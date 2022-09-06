@@ -17,10 +17,6 @@ const Collection = lazy(() => import('./components/Collection/Collection'))
 
 const App = () => {
 
-  const [authenticated, setAuthenticated] = useState(false)
-
-  const [ modal, setModal ] = useState('')
-
   const notif = (type, title, message) => {
     notification[type](
       {
@@ -42,6 +38,33 @@ const App = () => {
   return cookie[cookieName]
   }
 
+  const [ authenticated, setAuthenticated ] = useState(false)
+
+  const [ username, setUsername ] = useState('')
+
+  const [ modal, setModal ] = useState('')
+
+  const [ playlists, setPlaylists ] = useState([])
+
+  useEffect(() => {
+    if(getCookie('token')){
+      fetchPlaylists()
+    }
+}, [])
+
+const fetchPlaylists = () => {
+  const token = getCookie('token')
+  fetch('http://localhost:3002/playlists/get-playlists-by-token/' + token, {method: 'GET'})
+  .then(res => {
+      console.log(res)
+      return res.json()
+  })
+  .then(res => {
+      console.log(res)
+      setPlaylists(res.body)
+  })
+}
+
   useEffect(() => {
     if(document.cookie){
       console.log(document.cookie)
@@ -58,7 +81,11 @@ const App = () => {
           console.log(result)
           if(result.ok){
             setAuthenticated(true)
+            return result.json()
           } 
+        })
+        .then(result => {
+          setUsername(result.body.username)
         })
         .catch(err => {
           console.log(err)
@@ -82,10 +109,10 @@ const App = () => {
         <Switch>
           {/* <Route path="/" element={<Main/>} />
           <Route path="/videos" element={<Videos/>} /> */}
-          <Route path="/audios" render={(props) => <Audios {...props} setModal={setModal} modal={modal} notification={notif}/>} exact/>
+          <Route path="/audios" render={(props) => <Audios {...props} setModal={setModal} modal={modal} notification={notif} playlists={playlists}/>} exact/>
           <Route path="/audios/new-audio" render={(props) => <NewAudio notification={notif}/>} exact/>
           <Route path="/audios/:id" component={AudioPage}/>
-          <Route path="/collection" component={(props) => <Collection getCookie={getCookie} setModal={setModal} modal={modal}/>}/>
+          <Route path="/collection" component={(props) => <Collection getCookie={getCookie} setModal={setModal} modal={modal} playlists={playlists} username={username}/>}/>
         </Switch>
       </Suspense>
 </BrowserRouter>
