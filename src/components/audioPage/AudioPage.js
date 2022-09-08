@@ -18,13 +18,14 @@ class AudioPage extends Component {
     getSongById = () => {
         const id = this.props.match.params.id;
         fetch('http://localhost:3002/audios/audio-info-by-id', {method: 'POST', 
-        body: id})
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id: id})})
         .then(result => {
             console.log(result)
             return result.json();
         })
         .then(result => {
-            this.setState({songInfo: result.audioInfo[0]})
+            this.setState({songInfo: result.audioInfo})
             this.setState({loadingSongData: false})
         })
         .catch(err => {

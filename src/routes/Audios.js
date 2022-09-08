@@ -111,7 +111,9 @@ const fetchAudios = () => {
   const audiosMenu = (item) => (
     <Menu>
       <Menu.Item key="1" icon={<EyeOutlined />} onClick={() => toAudioPageHandler(item)}>Audio Info</Menu.Item> 
-        <SubMenu key="2" icon={<PlusOutlined style={{"marginTop": "10px"}} />} title={ <span>Add to playlist</span>  }> 
+        {
+          props.getCookie('token') ? 
+        <SubMenu key="2" title={ <span style={{"display": "inline-flex", "alignItems": "center"}}> <PlusOutlined style={{"marginRight": "7px"}}/> <span>Add to playlist</span> </span>  }> 
         {/* Playlists from server (Fetch + render)*/}
           {props.playlists.length >= 1 ?
             props.playlists.map(el => {
@@ -124,7 +126,8 @@ const fetchAudios = () => {
              :
             <Menu.Item disabled={true}>No playlists</Menu.Item>
 }            
-        </SubMenu>
+        </SubMenu> : null
+        }
       <Menu.Item key="3" icon={<EditOutlined />} onClick={() => {
         setSingerForm({...singerForm, id: item})
         props.setModal('edit_audio')
@@ -166,6 +169,7 @@ const fetchAudios = () => {
   }
 
   const toAudioPageHandler = (id) => {
+    console.log(id)
     props.history.push( props.history.location.pathname + '/' + id)
   }
 
@@ -281,6 +285,7 @@ const handleSongUpdate = async (e) => {
       <div className="container">
         <div className='audio-search-wrapper'>
               <input type="text" placeholder='What song are you searching for?'/>
+              <Button type="primary"><span><PlusOutlined style={{ verticalAlign: 'middle', }}/> <span>New Audio</span> </span></Button>
               <div className='audio-search-sort-by-wrapper'>
                 <img style={{width: '24px', height: '24px'}} src="images/sort-by.svg" alt="" />
                 <div 

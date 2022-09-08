@@ -109,10 +109,10 @@ const fetchPlaylists = () => {
         <Switch>
           {/* <Route path="/" element={<Main/>} />
           <Route path="/videos" element={<Videos/>} /> */}
-          <Route path="/audios" render={(props) => <Audios {...props} setModal={setModal} modal={modal} notification={notif} playlists={playlists}/>} exact/>
+          <Route path="/audios" render={(props) => <Audios {...props} setModal={setModal} modal={modal} notification={notif} playlists={playlists} getCookie={getCookie}/>} exact/>
           <Route path="/audios/new-audio" render={(props) => <NewAudio notification={notif}/>} exact/>
           <Route path="/audios/:id" component={AudioPage}/>
-          <Route path="/collection" component={(props) => <Collection getCookie={getCookie} setModal={setModal} modal={modal} playlists={playlists} username={username}/>}/>
+          <Route path="/collection" component={(props) => <Collection getCookie={getCookie} fetchPlaylists={fetchPlaylists} setModal={setModal} modal={modal} notification={notif} playlists={playlists} username={username} />}/>
         </Switch>
       </Suspense>
 </BrowserRouter>

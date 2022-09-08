@@ -1,9 +1,7 @@
 import React, { useState, useMemo } from 'react'
 
-import { Dropdown, Popconfirm, Menu, Modal, Form, Input, Button, Spin } from 'antd'
+import { Dropdown, Popconfirm, Menu, Modal, Form, Input, Button, Spin, notification } from 'antd'
 import { PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
-
-import Spinner from '../UI/Spinner'
 
 import { useEffect } from 'react'
 
@@ -15,10 +13,10 @@ const Collection = (props) => {
 
     const [ newPlaylistForm, setNewPlaylistForm ] = useState({})
 
-    // useEffect(() => {
-    //     console.log(newPlaylistForm)
-    // }, [newPlaylistForm])
+    const [ editPlaylistForm, setEditPlaylistForm ] = useState({})
 
+    const [ editModalVisibility, setEditModalVisibility ] = useState(false)
+ 
     const collectionMenuHandler = ({ key }) => {
         setMenuKey(key)
     }
@@ -27,10 +25,10 @@ const Collection = (props) => {
         <Menu>
           <Menu.Item key="1" icon={<EyeOutlined/>}>View</Menu.Item>
           <Menu.Item key="3" icon={<EditOutlined />} onClick={() => {
-            props.setModal('edit_audio')
-            }}> Edit 
+            setEditModalVisibility(true)
+            setEditPlaylistForm({...editPlaylistForm, "playlist-id": item._id})}}> Edit 
           </Menu.Item>
-          <Popconfirm placement="topRight" title={`You\'re about to delete track. Proceed?`} okText="Да" cancelText="Нет">
+          <Popconfirm placement="topRight" title={`You\'re about to delete playlist. Proceed?`} okText="Yes" cancelText="No" onConfirm={() => handlePlaylistDelete(item._id)}>
               <Menu.Item danger key="4" icon={<DeleteOutlined />}>
                 Delete
               </Menu.Item>
@@ -44,7 +42,7 @@ const Collection = (props) => {
         props.playlists.length >= 1 ? 
         props.playlists.map(el => {
             return <>
-            <Dropdown overlay={playlistsMenu(el._id)} trigger={['contextMenu']}>
+            <Dropdown overlay={playlistsMenu(el)} trigger={['contextMenu']}>
             <div className="playlist-img playlist-img-hover" key={el._id} style={{"padding": "1%"}}>
                 <div style={{"display": "flex", "width": "150px", "height": "150px", "margin": "1% 1%", "background": `no-repeat url("http://localhost:3002/${el.image}")`, "backgroundSize" : "90%"}} > 
                 </div> 
@@ -91,32 +89,104 @@ const Collection = (props) => {
         fetch('http://localhost:3002/playlists/new-playlist', 
         {method: 'POST', 
         body: formData})
+        .then(res => res.json())
+        .then(res => {
+            props.notification(res.status, res.status == 'success' ? 'Success' : 'Error', res.message)
+            props.setModal('')
+            props.fetchPlaylists()
+        })
+    }
+
+    const handleEditPlaylist = (item) => {
+
+        const token = props.getCookie('token')
+
+        const formData = new FormData();
+        
+        formData.append("playlist-id", editPlaylistForm["playlist-id"])
+
+        if(editPlaylistForm["playlist-title"]){
+            formData.append('playlist-title', editPlaylistForm["playlist-title"])
+        }
+        if(token){
+            formData.append('token', token)
+        }
+        if(editPlaylistForm["playlist-image"]){
+            formData.append('playlist-image', editPlaylistForm["playlist-image"])
+        }
+        
+        
+        fetch('http://localhost:3002/playlists/edit-playlist', 
+        {method: 'POST', 
+        body: formData})
         .then(res => {
             console.log(res)
+            return res.json()
         })
-      }
+        .then(res => {
+            props.notification(res.status, res.status == 'success' ? 'Success' : 'Error', res.message)
+            setEditModalVisibility(false)
+            props.fetchPlaylists()
+        })
+    }
 
-      const playlistsHere = useMemo(() => renderPlaylists(), [menuKey])
+    const handlePlaylistDelete = ( id ) => {
+        fetch('http://localhost:3002/playlists/delete-playlist/' + id, 
+        {method: 'GET'})
+        .then(res => {
+            console.log(res)
+            return res.json()
+        })
+        .then(res => {
+            props.notification(res.status, res.status == 'success' ? 'Success' : 'Error', res.message)
+            props.fetchPlaylists()
+        })
+    }
+
+    const playlistsHere = useMemo(() => renderPlaylists(), [menuKey])
+    // const editModal = useMemo(() => renderEditModal, [props.modal])
+
+    useEffect(() => {
+        console.log(editPlaylistForm)
+    }, [editPlaylistForm])
 
 
     return (
         <>
-        <Modal footer={false} title={'New playlist'} visible={props.modal === 'new_playlist'} onCancel={() => props.setModal({modal: ''})} onOk={() => {props.setModal({modal: ''});}}>
-                    <Form onFinish={handlePlaylistCreation} encType='multipart/form-data'>
-                    <Form.Item
-                        name="title"
-                        label="Playlist name"
-                        rules={[{required: true},]}>
-                        <Input onChange={(e) => setNewPlaylistForm({...newPlaylistForm, "playlist-title": e.target.value})}/>
-                    </Form.Item>
-                    <Form.Item label="Cover Image">
+        <Modal footer={false} title={'New playlist'} visible={props.modal == "new_playlist"} onCancel={() => props.setModal({modal: ''})} onOk={() => {props.setModal({modal: ''});}}>
+            <Form onFinish={handlePlaylistCreation} encType='multipart/form-data'>
+                <Form.Item
+                    name="title"
+                    label="Playlist name"
+                    rules={[{required: true},]}>
+                    <Input onChange={(e) => setNewPlaylistForm({...newPlaylistForm, "playlist-title": e.target.value})}/>
+                </Form.Item>
+                <Form.Item label="Cover Image">
                     <Input onChange={(e) => setNewPlaylistForm({...newPlaylistForm, "playlist-image": e.target.files[0]})} placeholder="Playlist cover" type="file"/>
                 </Form.Item>
-                    <Form.Item style={{"textAlign": "center", "margin": "0 auto"}}>
+                <Form.Item style={{"textAlign": "center", "margin": "0 auto"}}>
                     <Button type="primary" htmlType='submit'>Create playlist</Button>
-                    </Form.Item>
-                    </Form>
-                </Modal>
+                </Form.Item>
+            </Form>
+        </Modal>
+
+        <Modal footer={false} title={'Edit playlist'} visible={editModalVisibility} onCancel={() => {setEditModalVisibility(false); setEditPlaylistForm({})}} onOk={() => {props.setModal({modal: ''});}}>
+            <Form onFinish={handleEditPlaylist} encType='multipart/form-data'>
+             {/* initialValues={{"title": editPlaylistForm["playlist-title"] ? editPlaylistForm["playlist-title"] : null}}>*/}
+                <Form.Item
+                    name="title"
+                    label="New playlist name"
+                    rules={[{required: true},]}>
+                    <Input id="playlist-title" onChange={(e) => setEditPlaylistForm({...editPlaylistForm, "playlist-title": e.target.value})}/>
+                </Form.Item>
+                <Form.Item label="New cover image">
+                    <Input onChange={(e) => setEditPlaylistForm({...editPlaylistForm, "playlist-image": e.target.files[0]})} placeholder="Playlist cover" type="file"/>
+                </Form.Item>
+                <Form.Item style={{"textAlign": "center", "margin": "0 auto"}}>
+                    <Button type="primary" htmlType='submit'>Save changes</Button>
+                </Form.Item>
+            </Form>
+        </Modal>
 
             <div className="container">    
                 <div className='collection-page-wrapper'>
