@@ -12,7 +12,6 @@ import Spinner from './components/UI/Spinner';
 // const Videos = lazy(() => import('./routes/Videos'));
 const Audios = lazy(() => import('./routes/Audios'));
 const AudioPage = lazy(() => import('./components/audioPage/AudioPage'));
-const NewAudio = lazy(() => import('./routes/New-Audio'));
 const Collection = lazy(() => import('./components/Collection/Collection'))
 
 const App = () => {
@@ -34,13 +33,15 @@ const App = () => {
     let [key, value] = el.split('=')
     cookie[key.trim()] = value;    
     })
-    console.log(cookie)
+    // console.log(cookie)
   return cookie[cookieName]
   }
 
   const [ authenticated, setAuthenticated ] = useState(false)
 
   const [ username, setUsername ] = useState('')
+
+  const [ userRole, setUserRole ] = useState('guest')
 
   const [ modal, setModal ] = useState('')
 
@@ -110,13 +111,12 @@ const fetchPlaylists = () => {
           {/* <Route path="/" element={<Main/>} />
           <Route path="/videos" element={<Videos/>} /> */}
           <Route path="/audios" render={(props) => <Audios {...props} setModal={setModal} modal={modal} notification={notif} playlists={playlists} getCookie={getCookie}/>} exact/>
-          <Route path="/audios/new-audio" render={(props) => <NewAudio notification={notif}/>} exact/>
           <Route path="/audios/:id" component={AudioPage}/>
           <Route path="/collection" component={(props) => <Collection getCookie={getCookie} fetchPlaylists={fetchPlaylists} setModal={setModal} modal={modal} notification={notif} playlists={playlists} username={username} />}/>
         </Switch>
       </Suspense>
 </BrowserRouter>
-</div>)
+</div>) 
 }
 
 export default App;

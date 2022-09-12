@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react'
 
 import { Dropdown, Popconfirm, Menu, Modal, Form, Input, Button, Spin, notification } from 'antd'
-import { PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { UserOutlined, PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 
 import { useEffect } from 'react'
 
@@ -191,7 +191,10 @@ const Collection = (props) => {
             <div className="container">    
                 <div className='collection-page-wrapper'>
                     <div style={{"margin": "10px", "display": "flex"}} className="audio-page-user-info">
-                            <img style={{"marginRight": "20px","borderRadius": "50px", "width": "200px"}} src="https://i.pinimg.com/originals/37/6a/b1/376ab12a215b9f418806ac35b50e7299.jpg" alt="profile img"/>
+                            <div style={{"margin": "2%", "borderRadius": "50px", "width": "150px"}}>
+                                <UserOutlined style={{"fontSize": "124px"}}/>
+                            </div>
+                            
                         <div style={{"marginTop": "10px"}} className="audio-page-username">
                             <p>Collection</p>
                             <p style={{"fontWeight": "bold", "fontSize":"1.5em"}}>{props.username ? props.username : 'user'}</p>
