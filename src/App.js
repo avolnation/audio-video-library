@@ -97,7 +97,7 @@ const fetchPlaylists = () => {
 
   const logout = () => {
     document.cookie = `token=${getCookie('token')}; path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`
-    notif('success', 'Logged out', 'Sucesfully logged out. Page will reload in 2 seconds...')
+    notif('success', 'Logged out', 'Succesfully logged out. Page will reload in 1 second...')
     setTimeout(() => window.location.reload(), 2000)
   }
 
@@ -111,7 +111,7 @@ const fetchPlaylists = () => {
           {/* <Route path="/" element={<Main/>} />
           <Route path="/videos" element={<Videos/>} /> */}
           <Route path="/audios" render={(props) => <Audios {...props} setModal={setModal} modal={modal} notification={notif} playlists={playlists} getCookie={getCookie}/>} exact/>
-          <Route path="/audios/:id" component={AudioPage}/>
+          <Route path="/audios/:id" component={(props) => <AudioPage {...props} getCookie={getCookie} notification={notif}/>}/>
           <Route path="/collection" component={(props) => <Collection getCookie={getCookie} fetchPlaylists={fetchPlaylists} setModal={setModal} modal={modal} notification={notif} playlists={playlists} username={username} />}/>
         </Switch>
       </Suspense>

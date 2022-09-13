@@ -117,7 +117,7 @@ const addToPlaylistHandler = ( audioId, playlistId ) => {
   })
   .then(result => result.json())
   .then(result => {
-    props.notification(result.status, result.status == 'success' ? 'Success' : 'Error', result.message)
+    props.notification(result.status, result.status.charAt(0).toUpperCase() + result.status.slice(1), result.message)
   })
 }
 
@@ -129,7 +129,7 @@ const audioDeleteHandler = ( id ) => {
       return result.json()
     })
     .then(result => {
-      props.notification(result.status, result.status == 'success' ? 'Success' : 'Error', result.message)
+      props.notification(result.status, result.status.charAt(0).toUpperCase() + result.status.slice(1), result.message)
       fetchAudios()
     })
   // setTimeout(() => window.location.reload(), 500)
@@ -171,7 +171,7 @@ const audioUpdateHandler = async (values) => {
 
   console.log(await parsedResult)
 
-  props.notification('success', 'Success', await parsedResult.message)
+  props.notification('success', parsedResult.status.charAt(0).toUpperCase() + parsedResult.status.slice(1), await parsedResult.message)
 
   fetchAudios()
 
@@ -199,7 +199,7 @@ const audioUpdateHandler = async (values) => {
         return res.json()
     })
     .then(res => {
-        props.notification(res.status, res.status == 'success' ? 'Success' : 'Error', res.message)
+        props.notification(res.status, res.status.charAt(0).toUpperCase() + res.status.slice(1), res.message)
         setNewSingerModalShow(false)
         newSingerForm.resetFields()
     })

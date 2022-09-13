@@ -1,9 +1,9 @@
 .audio-page-wrapper {
     margin-top: 1% !important;
     background: rgb(255,255,255);
-    background: -moz-linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(204,204,204,1) 100%);
+    /* background: -moz-linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(204,204,204,1) 100%);
     background: -webkit-linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(204,204,204,1) 100%);
-    background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(204,204,204,1) 100%);
+    background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(204,204,204,1) 100%); */
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff",endColorstr="#cccccc",GradientType=1);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     border-radius: 10px;
@@ -40,10 +40,6 @@
     color: white;
     display: inline;
     vertical-align: center;
-}
-
-.audio-page-wrapper div {
-    padding: 5px;
 }
 
 .audio-page-album-icon {
@@ -88,9 +84,9 @@
     border: none;
     /* border: 3px solid #ccc; */
     border-radius: 5px;
-    width: 98%;
+    /* width: 98%; */
     height: 50px;
-    margin-top: 10px;
+    /* margin-top: 10px; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -117,9 +113,9 @@
 }
 
 .audio-comments-section button {
-    margin-left: 2%;
-    background-color: #eee;
-    border-color: #eee;
+    /* margin-left: 2%; */
+    /* background-color: #eee; */
+    /* border-color: #eee; */
     width: 20%;
     height: 40px;
 }
