@@ -66,7 +66,7 @@ const ModalWindow = props => {
   return (
     modalType == 'Sign Up' ? 
     <>
-      <Modal title={modalType} visible={show} onCancel={hide} onOk={signupHandler}>
+      <Modal title={modalType} visible={show} onCancel={() => {hide(); form.resetFields()}} onOk={signupHandler}>
         <Form form={form}>
           <Form.Item
             name="email"
@@ -78,13 +78,13 @@ const ModalWindow = props => {
             name="password"
             label="Password"
             rules={[{required: true},]}>
-            <Input/>
+            <Input.Password />
           </Form.Item>
         </Form>
       </Modal>
     </> :
     <>
-    <Modal title={modalType} visible={show} onCancel={hide} onOk={loginHandler}>
+    <Modal title={modalType} visible={show} onCancel={() => {hide(); form.resetFields()}} onOk={loginHandler}>
       <Form form={form}>
         <Form.Item
           name="email"
@@ -96,9 +96,9 @@ const ModalWindow = props => {
           name="password"
           label="Password"
           rules={[{required: true},]}>
-          <Input.Password />
+          <Input.Password/>
         </Form.Item>
-          <Button>Forgot Password?</Button>
+          {/* <Button>Forgot Password?</Button> */}
       </Form>
     </Modal>
   </>

@@ -72,7 +72,7 @@ const AudioPage = (props) => {
         console.log(userToken)
         
         if(userToken){
-            setLoadingSongData(true)
+            // setLoadingSongData(true) 
 
             fetch('http://localhost:3002/audios/add-to-favorites', {method: 'POST', 
             headers: {"Content-Type": "application/json"},
@@ -180,7 +180,6 @@ const AudioPage = (props) => {
                             <FileUnknownOutlined style={{"fontSize": "50px"}}/>
                             <p>No comments yet</p>
                         </> }
-                        
                 </div>
             </div> 
         </div>

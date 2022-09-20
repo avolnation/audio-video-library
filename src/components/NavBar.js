@@ -37,21 +37,25 @@ const NavBar = props => {
           {
             key: '1',
             label: (
-              <a rel="noopener noreferrer" href="http://localhost:3000/collection">
+              <a style={{"textDecoration": "none"}} href="http://localhost:3000/collection">
                 Collection
               </a>
             ),
           },
+          props.userRole == 'admin' 
+          ? 
           {
             key: '2',
             label: (
-              <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
+              <a style={{"textDecoration": "none"}} href="http://localhost:3000/admin-panel">
                 Admin panel
               </a>
             ),
             // icon: <SmileOutlined />,
-            disabled: true,
-          },
+            disabled: false,
+          }
+          : 
+          null,
           {
             key: '4',
             danger: true,
@@ -82,11 +86,11 @@ const NavBar = props => {
                         <a>Logo here</a>
                     </li>
                     <li>
-                        <a>Audios</a> 
+                        <a href="http://localhost:3000/audios">Audios</a> 
                     </li>
-                    <li>
+                    {/* <li>
                         <a>Videos</a>
-                    </li>
+                    </li> */}
                     <li>
                         <Dropdown overlay={accountDropdown} trigger={['click']}>
                             <a onClick={(e) => e.preventDefault()}>

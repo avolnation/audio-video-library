@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react'
 
 import { Dropdown, Popconfirm, Menu, Modal, Form, Input, Button, Spin, notification } from 'antd'
-import { UserOutlined, PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { FileUnknownOutlined, UserOutlined, PlusOutlined, EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 
 import { useEffect } from 'react'
 
@@ -53,7 +53,8 @@ const Collection = (props) => {
         })
         : 
         <>
-            <div> No playlists yet</div>
+            {/* <FileUnknownOutlined style={{"fontSize": "50px"}}/>
+            <span> No playlists yet</span> */}
         </>
     
         let collectionMenu;

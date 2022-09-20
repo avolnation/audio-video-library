@@ -13,8 +13,11 @@ import Spinner from './components/UI/Spinner';
 const Audios = lazy(() => import('./routes/Audios'));
 const AudioPage = lazy(() => import('./components/audioPage/AudioPage'));
 const Collection = lazy(() => import('./components/Collection/Collection'))
+const AdminPanel = lazy(() => import('./components/AdminPanel/AdminPanel'))
 
 const App = () => {
+
+  const api_url = 'http://localhost:3002/';
 
   const notif = (type, title, message) => {
     notification[type](
@@ -87,6 +90,7 @@ const fetchPlaylists = () => {
         })
         .then(result => {
           setUsername(result.body.username)
+          setUserRole(result.body.role)
         })
         .catch(err => {
           console.log(err)
@@ -105,14 +109,15 @@ const fetchPlaylists = () => {
   return (
   <div className="App">
   <BrowserRouter>
-    <NavBar authenticated={authenticated} notification={notif} logout={logout}/>
+    <NavBar authenticated={authenticated} userRole={userRole} notification={notif} logout={logout}/>
       <Suspense fallback={Spinner}>
         <Switch>
           {/* <Route path="/" element={<Main/>} />
           <Route path="/videos" element={<Videos/>} /> */}
-          <Route path="/audios" render={(props) => <Audios {...props} setModal={setModal} modal={modal} notification={notif} playlists={playlists} getCookie={getCookie}/>} exact/>
+          <Route path="/audios" render={(props) => <Audios {...props} setModal={setModal} modal={modal} notification={notif} playlists={playlists} getCookie={getCookie} userRole={userRole}/>} exact/>
           <Route path="/audios/:id" component={(props) => <AudioPage {...props} getCookie={getCookie} notification={notif}/>}/>
           <Route path="/collection" component={(props) => <Collection getCookie={getCookie} fetchPlaylists={fetchPlaylists} setModal={setModal} modal={modal} notification={notif} playlists={playlists} username={username} />}/>
+          <Route path="/admin-panel" component={(props) => <AdminPanel api_url={api_url} getCookie={getCookie} fetchPlaylists={fetchPlaylists} notification={notif} playlists={playlists} username={username} userRole={userRole}/>}/>
         </Switch>
       </Suspense>
 </BrowserRouter>

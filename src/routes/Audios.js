@@ -38,6 +38,7 @@ const Audio = (props) => {
   const [editAudioForm] = Form.useForm()
   const [newAudio] = Form.useForm()
   const [newSingerForm] = Form.useForm()
+  const [searchByQuery, setSearchByQuery] = useState('')
 
   //* Audio id from updating and etc.
   const [audioId, setAudioId] = useState(null)
@@ -71,7 +72,6 @@ const Audio = (props) => {
     })
     .catch(err => {
         console.log(err)
-        setLoadingGenres(false);
     })
 }
 
@@ -88,7 +88,7 @@ const fetchSingers = () => {
     })
     .catch(err => {
         console.log(err)
-        setLoadingSingers(false);
+
     })
 }
 
@@ -105,7 +105,9 @@ const fetchAudios = () => {
     })
     .catch(err => {
         console.log(err)
-        setLoading(false);
+        props.notification('warning', 'Warning', 'No connection or API server is down. \n Try again later.')
+        // setLoading(false);
+
     })
 }
 
@@ -199,6 +201,7 @@ const audioUpdateHandler = async (values) => {
         return res.json()
     })
     .then(res => {
+        fetchSingers()
         props.notification(res.status, res.status.charAt(0).toUpperCase() + res.status.slice(1), res.message)
         setNewSingerModalShow(false)
         newSingerForm.resetFields()
@@ -237,8 +240,58 @@ const audioUpdateHandler = async (values) => {
       fetchAudios()
       
   }
+
+  const searchByQueryHandler = (event) => {
+    if(searchByQuery !== ''){
+      if(event.key == 'Enter'){
+        fetch(api_url + 'audios/get-audios-by-query/' + searchByQuery)
+        .then(res => {
+            return res.json()
+        })
+        .then(res => {
+            setTracks(res.body)
+            props.notification(res.status, res.status.charAt(0).toUpperCase() + res.status.slice(1), res.message)
+        })
+        .catch(err => {
+          props.notification('error', 'Error', err.message)
+        })
+      } 
+    }
+  }
   
   const audiosMenu = (item) => (
+    <Menu>
+      <Menu.Item key="1" icon={<EyeOutlined />} onClick={() => toAudioPageHandler(item)}>Audio Info</Menu.Item> 
+        {
+          props.getCookie('token') ? 
+        <SubMenu key="2" title={ <span style={{"display": "inline-flex", "alignItems": "center"}}> <PlusOutlined style={{"marginRight": "7px"}}/> <span>Add to playlist</span> </span>  }> 
+        {/* Playlists from server (Fetch + render)*/}
+          {props.playlists.length >= 1 ?
+            props.playlists.map(el => {
+              return <Menu.Item key={el._id} onClick={() => {
+                addToPlaylistHandler(item, el._id)
+              }}> 
+                {el.title}
+              </Menu.Item>
+            })
+             :
+            <Menu.Item disabled={true}>No playlists</Menu.Item>
+}            
+        </SubMenu> : null
+        }
+      <Menu.Item key="3" icon={<EditOutlined />} onClick={() => {
+        setAudioId(item)
+        props.setModal('edit_audio')
+        }}> Edit 
+      </Menu.Item>
+      <Popconfirm onConfirm={() => audioDeleteHandler(item)} placement="topRight" title={`You\'re about to delete track. Proceed?`} okText="Да" cancelText="Нет">
+          <Menu.Item danger key="4" icon={<DeleteOutlined />}>
+            Delete
+          </Menu.Item>
+      </Popconfirm>
+    </Menu>)
+
+  const playlistMenu = (item) => (
     <Menu>
       <Menu.Item key="1" icon={<EyeOutlined />} onClick={() => toAudioPageHandler(item)}>Audio Info</Menu.Item> 
         {
@@ -274,7 +327,7 @@ const audioUpdateHandler = async (values) => {
   
   audios = tracks && tracks.length>=1 ? tracks.map((el, index) => {
         return (
-          <Dropdown overlay={audiosMenu(el._id)} trigger={['contextMenu']}>
+          <Dropdown overlay={playlistMenu(el._id)} trigger={['contextMenu']}>
             <div className="audio-item" key={el.title}>
                 <div className="grid-play">
                   <img src="/images/play-button.svg" alt="play"/>
@@ -299,10 +352,13 @@ const audioUpdateHandler = async (values) => {
  
 
   singersArray.push(singers ? singers.map((el, idx) => {
-    return <Option key={el._id}>
-        <img style={{"width": "30px", "marginRight": "5px"}} src={api_url + el.imageUrl} alt="singer"></img>
-        {el.name}
-        </Option>
+        return  (
+        <Option key={el._id}>
+        {/* <Dropdown overlay={singersMenu(el)} trigger={["contextMenu"]}> */}
+          <img style={{"width": "20px", "marginRight": "5px"}} src={api_url + el.imageUrl} alt="singer"></img>
+          {el.name}
+        {/* </Dropdown> */}
+      </Option>)
 }) : null)
 
 const setGenreForFilter = (el) => {
@@ -314,6 +370,9 @@ const setGenreForFilter = (el) => {
     props.notification(result.status, result.status == 'success' ? 'Success' : 'Error', result.message)
     console.log(result)
     setTracks(result.body)
+  })
+  .catch(err => {
+    props.notification('error', 'Error', err.message)
   })
 }
 
@@ -332,7 +391,6 @@ const sortByListenCountHandler = () => {
     
   return (
     <>
-
     <Modal footer={false} title="New Singer" visible={newSingerModalShow} onCancel={() => setNewSingerModalShow(false)}>
       <Form form={newSingerForm} labelCol={{ span: 24, }} onFinish={singerCreationHandler} encType="multipart/form-data">
         <Form.Item label="Singer name" name="name" required>
@@ -430,11 +488,13 @@ const sortByListenCountHandler = () => {
 
     <div className="container">
       <div className='audio-search-wrapper'>
-        <Input type="primary" placeholder='What song are you searching for?'/>
+          <Input type="primary" placeholder='What audio are you searching for?' onChange={(e) => setSearchByQuery(e.target.value)} onKeyDown={searchByQueryHandler}/>
         <div className='audio-search-sort-by-wrapper'>
+          {props.userRole == "admin" ? 
           <Tooltip title="New Audio">
             <Button shape="circle" icon={<PlusOutlined/>} onClick={() => props.setModal('new_audio')}/>
-          </Tooltip>
+          </Tooltip> :
+          null}
           <img style={{"width": '24px', "height": '24px', "marginLeft": "10px"}} src="images/sort-by.svg" alt="" />
           <div className='audio-search-sort-by-item' onClick={sortByListenCountHandler}> Listen Count 
               <img src={listenCountSort ? 'images/sort-down.svg' : 'images/sort-up.svg'} alt="sort" />
